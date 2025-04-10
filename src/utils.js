@@ -158,7 +158,10 @@ async function settle(config, response, delay) {
 function createAxiosError(message, config, response, code) {
   // axios v0.27.0+ defines AxiosError as constructor
   if (typeof axios.AxiosError === "function") {
-    return axios.AxiosError.from(new Error(message), code, config, null, response);
+    return axios.AxiosError.from(new Error(message), code, config, null, {
+      headers: {}, // default empty headers
+      ...response,
+    });
   }
 
   // handling for axios v0.26.1 and below
@@ -166,7 +169,10 @@ function createAxiosError(message, config, response, code) {
   error.isAxiosError = true;
   error.config = config;
   if (response !== undefined) {
-    error.response = response;
+    error.response = { 
+      headers: {}, // default empty headers
+      ...response,
+     };
   }
   if (code !== undefined) {
     error.code = code;
